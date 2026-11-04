@@ -1,0 +1,17 @@
+# Configuration FRAGMENT, not a standalone proxy configuration.
+# Merge into existing top-level mappings; never duplicate rule-providers/rules keys.
+# Apple Intelligence US must already exist and select an appropriate node.
+rule-providers:
+  apple-ai:
+    type: http
+    behavior: classical
+    format: text
+    url: https://raw.githubusercontent.com/zhangzhishan/apple-ai-rules/master/Apple-AI.list
+    path: ./ruleset/apple-ai.list
+    interval: 86400
+    proxy: Apple Intelligence US
+
+rules:
+  # Insert BEFORE broad apple.com / icloud.com DIRECT rules and Apple rule sets.
+  - RULE-SET,apple-ai,Apple Intelligence US
+  # Keep the rest of your existing rules below; this snippet does not replace them.
