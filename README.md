@@ -8,7 +8,7 @@
 https://raw.githubusercontent.com/zhangzhishan/apple-ai-rules/master/Apple-AI.list
 ```
 
-仓库只维护 **一份** `Apple-AI.list`，两种客户端订阅同一个地址。规则文件不包含策略名、节点、账号、密码、订阅凭据或家庭网络地址。
+Apple AI 仍只维护 **一份** `Apple-AI.list`，两种客户端订阅同一个地址。另有独立的 `Loon-Direct.list`，用于常用应用直连；两个文件分别绑定策略，不能混用。规则文件不包含策略名、节点、账号、密码、订阅凭据或家庭网络地址。
 
 ## Loon 和 Mihomo 的规则相同吗？
 
@@ -51,6 +51,26 @@ rules:
 **注意优先级：** Loon 官方手册说明，本地规则的优先级高于订阅规则；因此若已有本地 `DOMAIN-SUFFIX,apple.com,DIRECT`、`DOMAIN-SUFFIX,icloud.com,DIRECT` 等冲突规则，仅把本订阅移到远程规则列表顶部并不能覆盖它们。应先检查并有意识地处理冲突本地规则；不要不加区分地删除全部 Apple 直连规则。[3]
 
 Loon 和 Mihomo 的策略组配置是各自独立的。在路由器上存在一个同名组，不代表 Loon 中也自动存在。
+
+## 常用应用直连：独立的 Loon 文件
+
+```text
+https://raw.githubusercontent.com/zhangzhishan/apple-ai-rules/master/Loon-Direct.list
+```
+
+覆盖高德地图、微博（含新浪图片/脚本 CDN 与短链接）、京东和 Spotify 的域名。数据来源及额外补充域名在文件头注明；不包含共享云服务器 IP 旁路、节点或私人配置。此文件与 `Apple-AI.list` **分开维护**：前者在 Loon 绑定 `DIRECT`，后者继续使用原 Apple AI 策略。
+
+Loon 配置示例：
+
+```ini
+[Remote Rule]
+https://raw.githubusercontent.com/zhangzhishan/apple-ai-rules/master/Loon-Direct.list,policy=DIRECT,tag=常用应用直连,enabled=true
+# 下方保留其他原有远程规则
+```
+
+将新订阅放在其他可能命中这些服务的远程规则之前。已有本地应用代理规则仍可能优先命中，需逐条检查；无需删除原 `GEOIP,CN,DIRECT` 或 `FINAL` 兜底规则。订阅方式避免在各客户端复制数百条静态规则。
+
+匹配类型为 `DOMAIN`、`DOMAIN-SUFFIX` 与少量 `DOMAIN-KEYWORD`，**不是按 App/进程识别**。其他 App 访问相同域名也会命中；未覆盖的第三方域名依然按原配置分流。Spotify 在中国大陆网络下直连可能无法登录、加载或播放，`DIRECT` 不代表服务可用。发布或静态配置验证也不等于手机已经重新加载并命中规则。
 
 ## 规则范围与局限
 
